@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <table>
+        {% for object in object_list %}
+
+        <tr>
+            <td>{{ object.name }}</td>
+            <td>{{ object.course }}</td>
+            <td>{{ object.id }}</td>
+            <td><a href="/{{object.id}}">SEARCH</a> </td>
+            <td><a href="/update/{{object.id}}">UPDATE</a> </td>
+            <td><a href="/delete/{{object.id}}">DELETE</a> </td>
+        </tr>
+
+        {% endfor %}
+    </table>
+    <hr>
+    <br>
+    <a href="/"> Go back to home page</a>
+</body>
+</html>

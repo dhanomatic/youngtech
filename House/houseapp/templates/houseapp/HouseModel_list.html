@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <table>
+        {% for object in object_list %}
+        <tr>
+            <td>{{ object.housename}}</td>
+            <td>{{ object.housenumber}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

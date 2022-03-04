@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  {% for i in emplist %}
+    <tr>
+      <td>{{i.name}}</td>
+      <td>{{i.job}}</td>
+      <td>{{i.salary}}</td>
+      <td>{{i.comm}}</td>
+      <td>{{i.dept}}</td>
+      &nbsp; &nbsp;
+
+      <center>
+        <td><a href="/empupdate/{{i.id}}"> Update Employee</a></td>
+        &nbsp; &nbsp;
+        <td><a href="/empdetail/{{i.id}}">Detail Employee</a></td>
+        &nbsp; &nbsp;
+        <td><a href="/empdelete/{{i.id}}">Delete Employee</a></td>
+      </center>
+
+    </tr>
+  <hr>
+  <br>
+  {% endfor %}
+</body>
+</html>

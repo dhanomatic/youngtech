@@ -1,11 +1,26 @@
 {% extends 'homebase.html' %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+
+{% block content %}
+
+<br>
+<br>
+
+<h1>Welcome to Vicinity</h1>
+
+<br>
+<hr>
+<br>
+<button type="button"><a style="text-decoration=none" href="{% url 'login' %}"><b>Login</b></a></button>
+<br>
+
+<br><br>
+<small>don't have an account?</small>
+
+<a href="{% url 'user-reg' %}">Register here</a>
+
+<br>
+<br>
+<small>For Departments</small>
+<a href="{% url 'dept-reg' %}">Register here</a>
+{% endblock content %}

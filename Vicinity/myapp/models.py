@@ -39,4 +39,10 @@ class DeptReg(models.Model):
     state = models.CharField("Enter your state : ", max_length=30)
     country = models.CharField("Enter your country ", max_length=30)
     photo = models.ImageField(upload_to='images/')
-    status = models.CharField(max_length=20, default='new')
+    status = models.CharField(max_length=20, default='new department')
+
+# class AdminReg(models.Model):
+#     aid = models.IntegerField(primary_key=True)
+#     username = models.CharField("Username : ", max_length=30, unique=True)
+#     password = models.CharField("Password : ", max_length=15)
+#     status = models.CharField(max_length=20, default='new Admin')

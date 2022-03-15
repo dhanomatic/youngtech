@@ -8,17 +8,20 @@
 {% block content %}
 <table border="1">
     <th>Department ID</th>
+    <th>Image</th>
     <th>Username</th>
     <th>Department</th>
+
+    {% for i in object_list %}
   <tr>
-      {% for i in object_list %}
       <td>{{i.did}}</td>
+      <td><img src="{{i.photo.url}}" alt="" style="width:100px;height:150px"></td>
       <td>{{i.username}}</td>
       <td>{{i.department}}</td>
       <td><a href="/approval/{{i.did}}">Approval</a></td>
       <td><a href="/rejection/{{i.did}}">Reject</a></td>
-      {% endfor %}
   </tr>
+    {% endfor %}
 
 </table>
 {% endblock content %}

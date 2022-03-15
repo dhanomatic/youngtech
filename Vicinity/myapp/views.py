@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, ListView
-from django.shortcuts import render,redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, HttpResponse
 from .models import UserReg, DeptReg
 from django.db.models.functions import Coalesce
 from django.db.models import Max, Value
+
 
 # Create your views here.
 
 class Home(TemplateView):
     template_name = "home.html"
+
 
 class UserCreateView(CreateView):
     model = UserReg
@@ -28,14 +30,14 @@ class UserCreateView(CreateView):
         id = post.uid
         n = post.username
         print(id)
-        found=0
+        found = 0
         if UserReg.objects.filter(username=n).exists():
-            found=1
-        if found==0:
+            found = 1
+        if found == 0:
             post.save()
             return HttpResponseRedirect('http://127.0.0.1:8000')
         else:
-            return render(self.request,"UserReg_form.html")
+            return render(self.request, "UserReg_form.html")
 
 
 class DepartmentCreateView(CreateView):
@@ -68,15 +70,58 @@ class DepartmentCreateView(CreateView):
 
 class DepartmentListView(ListView):
     model = DeptReg
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object_list'] = DeptReg.objects.filter(status='new department')
         return context
 
-def DepartmentApprove(request,did):
+
+def DepartmentApprove(request, did):
     DeptReg.objects.filter(did=did).update(status="Department")
     return redirect('/list/')
 
+
 def DepartmentReject(request, did):
-    DeptReg.object.filter(did=did).update(status='Reject')
-    return redirect('/list')
+    DeptReg.objects.filter(did=did).update(status='Reject')
+    return redirect('/list/')
+
+
+
+def loginpage(request):
+    if request.method == "POST":
+        found = 0
+        a = request.POST.get("t1")
+        b = request.POST.get("t2")
+        drec = DeptReg.objects.filter(username=a, password=b)
+        if drec.filter(username=a, password=b).exists():
+            found = 1
+            for i in drec:
+                status = i.status
+                id = i.did
+                request.session['uname'] = a
+                request.session['pwd'] = b
+                request.session['ids'] = id
+                request.session['right'] = status
+                if status == 'new department':
+                    return HttpResponse('Your Applicatin is under processing')
+                elif status == 'department':
+                    return render(request, "depthome.html")
+                elif status == 'A':
+                    return render(request, "adminhome.html")
+                else:
+                    return HttpResponse('Your application is rejected')
+
+        if found == 0:
+            urec = UserReg.objects.filter(username=a, password=b)
+            if urec.filter(username=a, password=b).exists():
+                for i in urec:
+                    id = i.uid
+                    request.session['uname'] = a
+                    request.session['pwd'] = b
+                    request.session['id'] = id
+                    return render(request, "userhome.html")
+            else:
+                return HttpResponse("user doest exist")
+
+    return render(request, 'login.html')

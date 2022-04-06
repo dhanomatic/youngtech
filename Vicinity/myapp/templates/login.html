@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'homebase.html' %}
+
+{% block content %}
 <form action="" method="post" enctype="application/x-www-form-urlencoded">
     {% csrf_token %}
     Username <input type="text" name="t1">
     Password <input type="text" name="t2">
     <input type="submit" value="Login">
 </form>
-</body>
-</html>
+
+<br>
+<br>
+    <small>Go back to home</small>
+    <span><a href="{% url 'home'%}">Click here</a></span>
+{% endblock content %}

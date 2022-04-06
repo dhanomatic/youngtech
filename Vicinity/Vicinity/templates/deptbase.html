@@ -13,10 +13,11 @@
       <td><a href="#">Profile</a></td>
       <td><a href="#">Complaints</a></td>
       <td><a href="#">Settings</a></td>
-      <td><a href="#">Logout</a></td>
+      <td><a href="{% url 'logout' %}">Logout</a></td>
   </tr>
 </table>
-
+<br>
+<hr>
 <section>
 {% block content %}
 

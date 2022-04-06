@@ -1,8 +1,26 @@
-{% extends 'homebase.html' %}
+{% extends 'userbase.html' %}
 
 
 {% block content %}
 
 <h1>User Home</h1>
 
+<!--<table>-->
+<!--    {% for i in post %}-->
+<!--    <tr>-->
+<!--        <td>{{i.postid}}</td>-->
+<!--        <td>{{i.creatorid}}</td>-->
+<!--        <td>{{i.creator}}</td>-->
+<!--        <td>{{i.description}}</td>-->
+<!--        <td><img src="{{i.image.url}}" alt="" style="width:100px;height:150px"></td>-->
+<!--        <hr>-->
+<!--        <td><a href="/upvote/{{i.postid}}">Upvote</a></td>-->
+<!--        <td><a href="/downvote/{{i.postid}}">Downvote</a></td>-->
+<!--    </tr>-->
+<!--    {% endfor %}-->
+<!--</table>-->
+
+{% include 'displayPost.html' %}
 {% endblock content %}
+
+

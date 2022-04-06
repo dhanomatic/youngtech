@@ -1,0 +1,24 @@
+
+
+{% block content %}
+<table border="1">
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Panchayath</th>
+        <th>Department</th>
+        <th>Complaints</th>
+
+    {% for i in crec %}
+      <tr>
+          <td>{{i.uid}}</td>
+          <td>{{i.uname}}</td>
+          <td>{{i.panchayath}}</td>
+          <td>{{i.department}}</td>
+          <td>{{i.complaint}}</td>
+      </tr>
+    {% endfor %}
+
+</table>
+{% endblock content %}
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block content %}
+<table border="1">
+    <th>User ID</th>
+    <th>Image</th>
+    <th>Username</th>
+    <th>Panchayath</th>
+
+    {% for i in nrec %}
+  <tr>
+      <td>{{i.uid}}</td>
+      <td><img src="{{i.photo.url}}" alt="" style="width:100px;height:150px"></td>
+      <td>{{i.username}}</td>
+      <td>{{i.panchayath}}</td>
+  </tr>
+    {% endfor %}
+
+</table>
+{% endblock content %}
+</body>
+</html>

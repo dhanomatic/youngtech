@@ -41,8 +41,33 @@ class DeptReg(models.Model):
     photo = models.ImageField(upload_to='images/')
     status = models.CharField(max_length=20, default='new department')
 
-# class AdminReg(models.Model):
-#     aid = models.IntegerField(primary_key=True)
-#     username = models.CharField("Username : ", max_length=30, unique=True)
-#     password = models.CharField("Password : ", max_length=15)
-#     status = models.CharField(max_length=20, default='new Admin')
+class Post(models.Model):
+    postid = models.IntegerField(primary_key=True)
+    creatorid = models.IntegerField(unique=True)
+    creator = models.CharField(max_length=200)
+    description = models.TextField(null=True, blank=True)
+    pimage = models.ImageField(upload_to='images/', default='x')
+    upvote = models.IntegerField(default=0)
+    downvote = models.IntegerField(default=0)
+
+
+class Vote(models.Model):
+    postid = models.IntegerField()
+    uid = models.IntegerField()
+    upvotestatus = models.IntegerField(default=0)
+    downvotestatus = models.IntegerField(default=0)
+
+class Message(models.Model):
+    mid = models.IntegerField(primary_key=True)
+    uid = models.IntegerField()
+    uname = models.CharField(max_length=30)
+    message = models.CharField(max_length=300)
+
+
+class Complaints(models.Model):
+    cid = models.IntegerField(primary_key=True)
+    uid = models.IntegerField()
+    uname = models.CharField(max_length=30)
+    panchayath = models.CharField(max_length=100)
+    department = models.CharField(max_length=100)
+    complaint = models.TextField(max_length=300)

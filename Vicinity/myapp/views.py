@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from django.views.generic import TemplateView, CreateView, ListView
 from django.shortcuts import render, redirect, HttpResponseRedirect, HttpResponse
-from .models import UserReg, DeptReg
+from .models import UserReg, DeptReg, Post, Vote, Message, Complaints
 from django.db.models.functions import Coalesce
-from django.db.models import Max, Value
+from django.db.models import Max, Value, F
+from .form import PostForm, MessageForm, ComplaintForm
+
 
 
 # Create your views here.
@@ -99,14 +101,18 @@ def loginpage(request):
             for i in drec:
                 status = i.status
                 id = i.did
+                panchayath = i.panchayath
                 request.session['uname'] = a
                 request.session['pwd'] = b
                 request.session['ids'] = id
                 request.session['right'] = status
+                request.session['panchayath'] = panchayath
                 if status == 'new department':
-                    return HttpResponse('Your Applicatin is under processing')
-                elif status == 'department':
-                    return render(request, "depthome.html")
+                    return HttpResponse('Your Application is under processing')
+                elif status == 'Department':
+                    form = DeptReg.objects.filter(username=request.session['uname'])
+                    context={'form':form}
+                    return redirect('/displaydept/', context)
                 elif status == 'A':
                     return render(request, "adminhome.html")
                 else:
@@ -117,11 +123,189 @@ def loginpage(request):
             if urec.filter(username=a, password=b).exists():
                 for i in urec:
                     id = i.uid
+                    panchayath = i.panchayath
                     request.session['uname'] = a
                     request.session['pwd'] = b
                     request.session['id'] = id
-                    return render(request, "userhome.html")
+                    request.session['panchayath'] = panchayath
+                    return redirect('/display/')
             else:
                 return HttpResponse("user doest exist")
 
     return render(request, 'login.html')
+
+
+def logoutpage(request):
+    return render(request, 'home.html')
+
+def changePasswordUser(request):
+    if request.method == 'POST':
+        flag=0
+        a = request.POST.get('t1')
+        b = request.POST.get('t2')
+        c = request.POST.get('t3')
+        urec=UserReg.objects.filter(username=request.session['uname'], password=a)
+        if urec.filter(username=request.session['uname'], password=a).exists():
+            flag==1
+            if b==c:
+                UserReg.objects.filter(username=request.session['uname'], password=a).update(password=b)
+                return redirect("/login/")
+            else:
+                return HttpResponse('Password miss match')
+        if flag==0:
+            drec=DeptReg.objects.filter(username=request.session['uname'], password=a)
+            if drec.filter(username=request.session['uname'], password=a).exists():
+                if b==c:
+                    DeptReg.objects.filter(username=request.session['uname'], password=a).update(password=b)
+                    return redirect("/login/")
+                else:
+                    return HttpResponse('Password miss match')
+    else:
+        return render(request, "changepassword.html")
+
+
+
+def post(request):
+    prec = UserReg.objects.filter(username=request.session['uname'])
+    if prec.filter(username=request.session['uname']).exists():
+            if request.method == "POST":
+                form = PostForm(request.POST)
+
+                if form.is_valid():
+                    try:
+                        form.save()
+                    except:
+                        pass
+
+            else:
+                form = PostForm
+
+            return render(request, 'post.html', {'form': form})
+    else:
+        return HttpResponse('You are not logged in')
+
+
+
+def postdept(request):
+    pdrec = DeptReg.objects.filter(username=request.session['uname'])
+    if pdrec.filter(username=request.session['uname']).exists():
+            if request.method == "POST":
+                form = PostForm(request.POST)
+
+                if form.is_valid():
+                    try:
+                        form.save()
+                    except:
+                        pass
+
+            else:
+                form = PostForm
+
+            return render(request, 'postdept.html', {'form': form})
+    else:
+        return HttpResponse('You are not logged in')
+
+def displayPost(request):
+    post = Post.objects.all()
+    return render(request, "userhome.html", {"post":post})
+
+def displayPostDept(request):
+    post = Post.objects.all()
+    return render(request, "depthome.html", {"post":post})
+
+def upvote(request, postid):
+    # like = Post.objects.geupvote)
+    # like = like + 1
+
+    uprec = Vote.objects.filter(uid=request.session['ids'], postid=postid)
+    if uprec.filter(uid=request.session['ids'], postid=postid).exists():
+        upr = Vote.objects.all()
+        if upr.filter(upvotestatus=1, downvotestatus=0):
+            return redirect('/userhome/')
+        elif upr.filter(upvotestatus=0, downvotestatus=1):
+            Post.objects.filter(postid=postid).update(downvote=F('downvote') - 1)
+            Post.objects.filter(postid=postid).update(upvote=F('upvote') + 1)
+    else:
+        Post.objects.filter(postid=postid).update(upvote=F('upvote') + 1)
+    # Post.objects.filter(creator=request.session['uname'], creatorid=request.session['id'])
+    # Vote.objects.filter(creatorid=request.session['id']).update(upvotestatus=1)
+    return redirect('/display/')
+
+
+def downvote(request, postid):
+    dnrec = Vote.objects.filter(uid=request.session['ids'], postid=postid)
+    if dnrec.filter(uid=request.session['ids'], postid=postid).exists():
+        dpr = Vote.objects.all()
+        if dpr.filter(upvotestatus=0, downvotestatus=1):
+            return redirect('/userhome/')
+        elif upr.filter(upvotestatus=1, downvotestatus=0):
+            Post.objects.filter(postid=postid).update(upvote=F('upvote') - 1)
+            Post.objects.filter(postid=postid).update(downvote=F('downvote') + 1)
+
+    else:
+        Post.objects.filter(postid=postid).update(downvote=F('upvote') + 1)
+    # Post.objects.filter(creator=request.session['uname'], creatorid=request.session['id'])
+    # Vote.objects.filter(creatorid=request.session['id']).update(upvotestatus=1)
+    return redirect('/display/')
+
+
+def message(request):
+    mrec = UserReg.objects.filter(username=request.session['uname'])
+    if mrec.filter(username=request.session['uname']).exists():
+        if request.method == "POST":
+            form = MessageForm(request.POST)
+
+            if form.is_valid():
+                try:
+                    form.save()
+                except:
+                    pass
+
+        else:
+            form = MessageForm
+
+        return render(request, 'message.html', {'form': form})
+
+
+def neighbours(request):
+    nbrec = UserReg.objects.filter(username=request.session['uname'])
+    if nbrec.filter(username=request.session['uname']).exists():
+
+        nrec = UserReg.objects.filter(panchayath=request.session['panchayath'])
+        return render(request, 'neighbours.html', {'nrec':nrec})
+    else:
+        return HttpResponse('You are not logged in')
+
+
+def complaints(request):
+    crec = UserReg.objects.filter(username=request.session['uname'])
+    if crec.filter(username=request.session['uname']).exists():
+            if request.method == "POST":
+                form = ComplaintForm(request.POST)
+
+                if form.is_valid():
+                    try:
+                        form.save()
+                    except:
+                        pass
+
+            else:
+                form = ComplaintForm
+
+            return render(request, 'complaints.html', {'form': form})
+    else:
+        return HttpResponse('You are not logged in')
+
+
+def complaintList(request):
+    clrec = DeptReg.objects.filter(username=request.session['uname'])
+    if clrec.filter(username=request.session['uname']).exists():
+
+        crec = Complaints.objects.filter(panchayath=request.session['panchayath'])
+        return render(request, 'complaintlist.html', {'crec': crec})
+    else:
+        return HttpResponse('You are not logged in')
+
+
+def settings(request):
+    return render(request, 'settings.html')
